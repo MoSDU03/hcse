@@ -1,36 +1,37 @@
 package com.example.hcse;
 
 import com.example.hcse.components.CanvasManager;
-import com.example.hcse.components.DefaultComponentFactory;
-import com.example.hcse.components.UIComponent;
-import com.example.hcse.ui.CanvasArea;
-import com.example.hcse.ui.Sidebar;
+import com.example.hcse.ui.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class LowCodeApp extends Application {
-    private CanvasManager canvasManager;
-
     @Override
     public void start(Stage primaryStage) {
-        canvasManager = new CanvasManager();
-        DefaultComponentFactory factory = new DefaultComponentFactory();
-        CanvasArea canvas = new CanvasArea(canvasManager);
-        Sidebar sidebar = new Sidebar(factory, canvasManager, canvas);
+        StartScreen startScreen = new StartScreen();
 
-        BorderPane root = new BorderPane();
-        root.setLeft(sidebar);
-        root.setCenter(canvas);
+        Scene startScene = startScreen.createScene(primaryStage, selectedType -> {
+            if (selectedType.equalsIgnoreCase("Mobile app")) {
+                // Modular routing to mobile-specific builder
+                MobileBuilderScreen mobileBuilder = new MobileBuilderScreen();
+                Scene mobileScene = mobileBuilder.createScene();
+                primaryStage.setScene(mobileScene);
+            } else {
+                // Default builder route
+                CanvasController controller = new CanvasController(selectedType);
+                Scene builderScene = new Scene(controller.getCanvas(), 1000, 700);
+                primaryStage.setScene(builderScene);
+            }
+        });
 
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setTitle("Low-Code Tool Prototype");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(startScene);
+        primaryStage.setTitle("Low-Code Builder");
         primaryStage.show();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
 }
