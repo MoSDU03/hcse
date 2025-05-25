@@ -10,7 +10,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class MobileBuilderScreen {
@@ -26,10 +26,11 @@ public class MobileBuilderScreen {
         canvas.setPrefSize(375, 667);
         canvas.setStyle("-fx-background-color: #f9f9f9; -fx-border-color: #333; -fx-border-width: 2px;");
 
-        StackPane phoneFrame = new StackPane(canvas);
+        Pane phoneFrame = new Pane(canvas);
         phoneFrame.setPadding(new Insets(20));
         phoneFrame.setStyle("-fx-background-color: #dcdcdc;");
-        phoneFrame.setMaxSize(415, 707);
+        phoneFrame.setPrefSize(415, 707);
+
 
         // Sidebar
         VBox toolbox = new VBox(15);
@@ -72,6 +73,7 @@ public class MobileBuilderScreen {
 
     private void setupDrop(CanvasArea canvas) {
         canvas.setOnDragOver(event -> {
+            System.out.println("🎯 DragOver detected");
             if (event.getGestureSource() != canvas && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
@@ -79,34 +81,42 @@ public class MobileBuilderScreen {
         });
 
         canvas.setOnDragDropped(event -> {
+            System.out.println("🧲 Drop event detected!");
             Dragboard db = event.getDragboard();
             boolean success = false;
 
-            if (db.hasString()) {
-                String type = db.getString();
-                System.out.println("📥 Drop received: " + type);
-                String id = type.toLowerCase() + "_" + System.currentTimeMillis();
+            try {
+                if (db.hasString()) {
+                    String type = db.getString();
+                    System.out.println("📥 Drop received: " + type);
 
-                UIComponent component = factory.createComponent(type, id);
-                canvasManager.addComponent(component);
+                    String id = type.toLowerCase() + "_" + System.currentTimeMillis();
+                    UIComponent component = factory.createComponent(type, id);
+                    canvasManager.addComponent(component);
 
-                // Adjust drop coordinates
-                Point2D localPoint = canvas.sceneToLocal(event.getSceneX(), event.getSceneY());
-                System.out.println("🧭 Local drop coordinates: " + localPoint);
+                    Point2D localPoint = canvas.sceneToLocal(event.getSceneX(), event.getSceneY());
+                    System.out.println("🧭 Local drop coordinates: " + localPoint);
 
+                    double x = Math.max(10, Math.min(localPoint.getX(), canvas.getWidth() - 100));
+                    double y = Math.max(10, Math.min(localPoint.getY(), canvas.getHeight() - 30));
 
-                if (component instanceof LabelComponent label) {
-                    label.getProperties().put("text", "Label");
-                    canvas.renderLabelAt(label, localPoint.getX(), localPoint.getY());
-                } else if (component instanceof SetValueComponent button) {
-                    canvas.renderButtonAt(button, localPoint.getX(), localPoint.getY());
+                    if (component instanceof LabelComponent label) {
+                        label.getProperties().put("text", "Label");
+                        canvas.renderLabelAt(label, x, y);
+                    } else if (component instanceof SetValueComponent button) {
+                        canvas.renderButtonAt(button, x, y);
+                    }
+
+                    success = true;
                 }
-
-                success = true;
+            } catch (Exception ex) {
+                System.out.println("❌ Exception during drop: " + ex.getMessage());
+                ex.printStackTrace();
             }
 
             event.setDropCompleted(success);
             event.consume();
         });
+
     }
 }

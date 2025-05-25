@@ -7,6 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class CanvasArea extends Pane {
     private final CanvasManager canvasManager;
@@ -14,10 +16,12 @@ public class CanvasArea extends Pane {
 
     public CanvasArea(CanvasManager canvasManager) {
         this.canvasManager = canvasManager;
-        this.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000;");
+        this.setStyle("-fx-background-color: white; -fx-border-color: black;");
         this.setPrefSize(400, 400);
-        this.setPickOnBounds(true); // Ensure it can receive mouse events
-
+        this.setPickOnBounds(true);
+        Rectangle debugBox = new Rectangle(375, 667);
+        debugBox.setFill(Color.rgb(255, 255, 0, 0.2));
+        this.getChildren().add(debugBox);
     }
 
     // For CanvasController (default placement)
@@ -47,8 +51,11 @@ public class CanvasArea extends Pane {
         Label label = new Label((String) component.getProperties().getOrDefault("text", "Label"));
         label.setLayoutX(x);
         label.setLayoutY(y);
+        label.setPrefSize(80, 30);
+        label.setStyle("-fx-background-color: lightyellow; -fx-border-color: black;");
         enableDrag(label);
         this.getChildren().add(label);
+        System.out.println("✅ Label added to canvas");
     }
 
     public void renderButtonAt(SetValueComponent component, double x, double y) {
@@ -56,8 +63,11 @@ public class CanvasArea extends Pane {
         Button button = new Button("Set Value");
         button.setLayoutX(x);
         button.setLayoutY(y);
+        button.setPrefSize(100, 40);
+        button.setStyle("-fx-background-color: lightblue; -fx-border-color: black;");
         enableDrag(button);
         this.getChildren().add(button);
+        System.out.println("✅ Button added to canvas. Total children: " + this.getChildren().size());
     }
 
     private void enableDrag(Node node) {
