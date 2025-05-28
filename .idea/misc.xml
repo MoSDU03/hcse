@@ -5,6 +5,10 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/hcse-parent/hcse-app/pom.xml" />
+        <option value="$PROJECT_DIR$/hcse-parent/hcse-core/pom.xml" />
+        <option value="$PROJECT_DIR$/hcse-parent/hcse-ui/pom.xml" />
+        <option value="$PROJECT_DIR$/hcse-parent/pom.xml" />
       </list>
     </option>
   </component>

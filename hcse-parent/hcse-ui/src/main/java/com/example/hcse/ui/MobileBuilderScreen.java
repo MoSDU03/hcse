@@ -1,5 +1,6 @@
 package com.example.hcse.ui;
 
+import com.example.hcse.components.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;

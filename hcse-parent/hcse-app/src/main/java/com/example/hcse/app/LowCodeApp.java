@@ -1,6 +1,5 @@
-package com.example.hcse;
+package com.example.hcse.app;
 
-import com.example.hcse.components.CanvasManager;
 import com.example.hcse.ui.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
